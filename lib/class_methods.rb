@@ -9,7 +9,9 @@ module DeleteSoftly
     # Will result in:
     #   Item.at_time(DateTime.parse('2010-01-01')) #=> (SELECT "items".* FROM "items" WHERE (((("items"."deleted_at" > '2010-01-01 00:00:00') OR ("items"."deleted_at" IS NULL)) AND ("items"."created_at" < '2010-01-01 00:00:00')))
     def at_time(date = Time.now.utc)
-      with_deleted.where{ (deleted_at > date || deleted_at != nil) && created_at < date }
+      with_deleted do
+        where{ (deleted_at > date || deleted_at != nil) && created_at < date }
+      end
     end
     alias_method :at_date, :at_time
 
@@ -26,13 +28,13 @@ module DeleteSoftly
     #   Item.all #=> SELECT "items".* FROM "items"
     #   Item.active #=> SELECT "items".* FROM "items" WHERE ("items"."deleted_at" IS NULL)
     def active
-      where{deleted_at == nil}
+      where('deleted_at IS NULL')
     end
 
     # Same as active, but not to be overwritten. Active might become with disabled => false
     # or something like that. Without deleted should remain intact
     def without_deleted
-      where{deleted_at.nil?}
+      where('deleted_at IS NULL')
     end
 
     # Include deleted items when performing queries
@@ -50,11 +52,13 @@ module DeleteSoftly
     #   IHaveManyItems.first.items #=> SELECT "items".* FROM "items" WHERE ("items"."deleted_at" IS NULL) AND ("items".i_have_many_items_id = 1) ORDER BY "items"."content"
     #   IHaveManyItems.first.items.with_deleted #=> SELECT "items".* FROM "items" WHERE ("items".i_have_many_items_id = 1) ORDER BY "items"."content"
     def with_deleted(&block)
-      unscoped
+      unscoped(&block)
     end
-
+    
     def deleted
-      with_deleted.where{deleted_at != nil}
+      with_deleted do 
+        where( "deleted_at NOT NULL" )
+      end
     end
 
     # Support for paper_trail if it is installed as well. Then you can use:

@@ -18,7 +18,6 @@ module DeleteSoftly
       end
     
       @destroyed = true
-      freeze
     end
    
     # Revive a destroyed item. For a model like:
