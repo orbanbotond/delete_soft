@@ -10,9 +10,12 @@ module DeleteSoftly
     #   Item.at_time(DateTime.parse('2010-01-01')) #=> (SELECT "items".* FROM "items" WHERE (((("items"."deleted_at" > '2010-01-01 00:00:00') OR ("items"."deleted_at" IS NULL)) AND ("items"."created_at" < '2010-01-01 00:00:00')))
     def at_time(date = Time.now.utc)
       with_deleted do
-        where{ (deleted_at > date || deleted_at != nil) && created_at < date }
+        where('(deleted_at > :date OR deleted_at IS NULL) AND created_at < :date', {:date => date})
       end
     end
+    
+    "created_at >= :start_date AND created_at <= :end_date"
+    
     alias_method :at_date, :at_time
 
     # Give the currently active items. When delete_soflty is added this is invoked by default
