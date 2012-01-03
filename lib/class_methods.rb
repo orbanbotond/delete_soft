@@ -1,3 +1,5 @@
+require 'arel'
+
 module DeleteSoftly
   module ClassMethods
     # Give the representation of items at a certain date/time.
@@ -24,13 +26,13 @@ module DeleteSoftly
     #   Item.all #=> SELECT "items".* FROM "items"
     #   Item.active #=> SELECT "items".* FROM "items" WHERE ("items"."deleted_at" IS NULL)
     def active
-      where(:deleted_at => nil)
+      where{deleted_at == nil}
     end
 
     # Same as active, but not to be overwritten. Active might become with disabled => false
     # or something like that. Without deleted should remain intact
     def without_deleted
-      where(:deleted_at => nil)
+      where{deleted_at.nil?}
     end
 
     # Include deleted items when performing queries
@@ -49,27 +51,6 @@ module DeleteSoftly
     #   IHaveManyItems.first.items.with_deleted #=> SELECT "items".* FROM "items" WHERE ("items".i_have_many_items_id = 1) ORDER BY "items"."content"
     def with_deleted(&block)
       unscoped
-      # r = block_given? ? yield : unscoped
-      # 
-      # if scoped_methods.any? # There are scoped methods in place
-      # 
-      #   # remove deleted at condition if present
-      # 
-      #   # del = scoped_methods.last.where_values.delete(Squeel::Nodes::Predicate.new('deleted_at', :eq, nil))
-      #   del = scoped_methods.last.where_values.delete( {:deleted_at => nil} )
-      #   
-      #   # Execute block with deleted or just run scoped
-      #   r = block_given? ? yield : scoped
-      # 
-      #   # Add deleted condition if it was present
-      #   scoped_methods.last.where_values << del if del
-      # 
-      #   # Return de relation generated without deleted_at => nil
-      #   r
-      # else
-      #   # Do not do anything special when there are no scoped_methods
-      #   r = block_given? ? yield : scoped
-      # end
     end
 
     def deleted

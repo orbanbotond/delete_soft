@@ -1,17 +1,10 @@
 require "delete_soft/version"
 
-# DeleteSoftly
-# This is a gem/plugin that adds soft delete functionality to ActiveRecord.
-# Take a look at the 
-#  DeleteSoftly::ArExtender
-#  DeleteSoftly::ClassMethods
-#  DeleteSoftly::InstanceMethods
-# to get a feel of what is being done. This gem works through many relations
-
 require 'active_record'
 require 'squeel'
 require 'class_methods'
 require 'instance_methods'
+
 module DeleteSoftly
   module ARExtender
 

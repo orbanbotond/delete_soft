@@ -20,7 +20,7 @@ class DeleteSoftlyTest < ActiveSupport::TestCase
   test "two records available" do
     assert_equal 2, Post.count
   end
-
+  
   test "destroy count test" do
     @post1.destroy
     assert_equal 1, Post.count
@@ -47,7 +47,7 @@ class DeleteSoftlyTest < ActiveSupport::TestCase
     assert_equal [@post2], Post.without_deleted
     assert_equal [@post1, @post2], Post.at_time(t)
   end
-
+  
   test "other default scopes" do
     assert_equal 2, Comment.count
     @comment2_1.destroy
