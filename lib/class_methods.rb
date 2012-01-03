@@ -60,7 +60,7 @@ module DeleteSoftly
     
     def deleted
       with_deleted do 
-        where( "deleted_at NOT NULL" )
+        where( "deleted_at IS NOT NULL" )
       end
     end
 
